@@ -20,6 +20,7 @@ function ClientPool(option) {
   self.maxsize      = option.max || 10;
   self.timeout      = option.timeout || 30;
   self.cursize      = 0;
+  self.errcb        = option.errcb;
 
   //初始化链接
   self.initConnection();
@@ -34,7 +35,11 @@ function ClientPool(option) {
     clearTimeout(self.initTimer);
     self.initTimer = null;
     delete self.initTimer;
-    assert(self.readysize >= self.minsize, 'init connection timeout!!!');
+    //assert(self.readysize >= self.minsize, 'init connection timeout!!!');
+    if(self.readysize == 0 && self.errcb) {
+      console.log('init connection `${self.host}:${self.port}` timeout')
+      self.errcb(`${self.host}:${self.port}`);
+    }
   }
   //初始化超市判断
   self.initTimer = setTimeout(initTimeout, 
