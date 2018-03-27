@@ -26,7 +26,6 @@ function ClientPool(option) {
   self.initConnection();
   //任务事件触发
   self.on('doTask', function() {
-    console.log('get doTask event');
     self.doTask();
   });
 
@@ -35,9 +34,8 @@ function ClientPool(option) {
     clearTimeout(self.initTimer);
     self.initTimer = null;
     delete self.initTimer;
-    //assert(self.readysize >= self.minsize, 'init connection timeout!!!');
     if(self.readysize == 0 && self.errcb) {
-      console.log('init connection `${self.host}:${self.port}` timeout')
+      console.log(`init connection ${self.host}:${self.port} timeout`)
       self.errcb(`${self.host}:${self.port}`);
     }
   }
