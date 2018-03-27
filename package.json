@@ -1,6 +1,6 @@
 {
   "name": "socket-client-pool",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "node socket client pool",
   "main": "index.js",
   "scripts": {
