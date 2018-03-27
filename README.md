@@ -1,5 +1,9 @@
+根据网上的一些思路实现socket连接池。
+
 
 使用：
+    
+    npm install socket-client-pool
 
     let Client = require('socket-client-pool');
     let pool = Client.Pool({host: '127.0.0.1', port:8124, min: 2, max: 5});

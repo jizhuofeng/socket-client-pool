@@ -14,7 +14,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jizhuofeng/socket-client-pool"
+    "url": "git+https://github.com/jizhuofeng/socket-client-pool.git"
   },
   "author": "jizhuofeng@163.com",
   "license": "ISC",
