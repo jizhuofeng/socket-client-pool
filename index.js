@@ -21,7 +21,7 @@ function ClientPool(option) {
   self.timeout      = option.timeout || 30;
   self.cursize      = 0;
   self.errcb        = option.errcb;
-
+  self.succb        = option.succb;
   //初始化链接
   self.initConnection();
   //任务事件触发
@@ -36,12 +36,24 @@ function ClientPool(option) {
     delete self.initTimer;
     if(self.readysize == 0 && self.errcb) {
       console.log(`init connection ${self.host}:${self.port} timeout`)
-      self.errcb(`${self.host}:${self.port}`);
+      self.errcb(`${self.host}:${self.port}`, self);
     }
   }
   //初始化超市判断
   self.initTimer = setTimeout(initTimeout, 
     self.timeout * 1000);
+
+  // //服务端端口监控
+  // setTimeout(function() {
+  //  if(self.readysize == 0 && self.errcb) {
+  //    console.log(`connection ${self.host}:${self.port} invalid`)
+  //    self.errcb(`${self.host}:${self.port}`, self);
+  //  }
+  // }, 5000)
+  if(self.succb){
+    //如果有成功的连接则会执行该任务
+    self.taskList.push(self.succb);
+  }
 }
 
 util.inherits(ClientPool, events.EventEmitter);
@@ -75,7 +87,13 @@ ClientPool.prototype.createConnection = function() {
 
   });
   soc.on('error', function(e){
-    console.log('occour error ' + e.toString());
+    // console.log(JSON.stringify(e));
+    console.log(`connect ${self.host}:${self.port} occour error ${e.toString()}`);
+    if(e.code == 'ECONNREFUSED' || e.code === 'ETIMEDOUT') {
+      //如果服务端拒绝访问的错误或者超时
+      self.errcb(`${self.host}:${self.port}`, self)
+      return;
+    }
     //检查clientList中是否包含有error事件的socket
     for(let i = 0; i < self.clientList.length; i++) {
       let soc = self.clientList[i]
